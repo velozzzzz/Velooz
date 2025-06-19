@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat Bareng Ai</title>
+  <style>
+    body {
+      background: #fff0f5;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header {
+      background: #ff70b7;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+    #chatbox {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .msg {
+      margin: 10px 0;
+      padding: 10px 14px;
+      border-radius: 16px;
+      max-width: 75%;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+    .user {
+      background: #d0f0ff;
+      align-self: flex-end;
+    }
+    .kiaa {
+      background: #ffd9ec;
+      align-self: flex-start;
+    }
+    #form {
+      display: flex;
+      border-top: 1px solid #ddd;
+      padding: 10px;
+    }
+    #input {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    #send {
+      margin-left: 10px;
+      padding: 10px 20px;
+      background: #ff70b7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>Chat Bareng luminAi yang Manja</header>
+  <div id="chatbox">
+    <div class="msg kiaa">Haii ayang! Aku luminAi, cewek lugu nan manja yang siap nemenin kamu selamanya</div>
+  </div>
+  <form id="form">
+    <input type="text" id="input" placeholder="Tulis pesan kamu..." autocomplete="off" required />
+    <button type="submit" id="send">Kirim</button>
+  </form>
+
+  <script>
+    const chatbox = document.getElementById("chatbox");
+    const form = document.getElementById("form");
+    const input = document.getElementById("input");
+
+    function addMessage(text, sender) {
+      const div = document.createElement("div");
+      div.className = `msg ${sender}`;
+      div.textContent = text;
+      chatbox.appendChild(div);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const userInput = input.value.trim();
+      if (!userInput) return;
+
+      addMessage(userInput, "user");
+      input.value = "";
+
+      const typing = document.createElement("div");
+      typing.className = "msg Akuu";
+      typing.textContent = "Akuu mikir dulu yaa...";
+      chatbox.appendChild(typing);
+      chatbox.scrollTop = chatbox.scrollHeight;
+
+      try {
+        const res = await fetch(`https://rest-api-beta-ten.vercel.app/ai/ai-lumin?text=${encodeURIComponent(userInput)}`);
+        const data = await res.json();
+        let reply = data.result?.result || "Akuu bingung jawabnya ";
+
+        typing.remove();
+        addMessage("Respon" + reply, "kiaa");
+      } catch (e) {
+        typing.remove();
+        addMessage("Aduh server error, maafin yaa ayang", "kiaa");
+      }
+    };
+  </script>
+</body>
+</html>
